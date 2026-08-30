@@ -7,62 +7,95 @@
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; }
+
+  :root {
+    --bg: #14171c;
+    --bg-elevated: #1c2028;
+    --border: #2a2f3a;
+    --border-dashed: #3a3f4a;
+    --text: #f0efe9;
+    --text-strong: #f5f4f0;
+    --muted: #9a9fac;
+    --faint: #63687a;
+    --accent: #ff6b35;
+    --accent-soft-bg: rgba(255,107,53,0.15);
+    --surface-2: #2a2f3a;
+    --input-bg: #14171c;
+    --btn-text-on-accent: #14171c;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f6f3;
+    --bg-elevated: #ffffff;
+    --border: #e5e3dd;
+    --border-dashed: #d8d5cc;
+    --text: #14171c;
+    --text-strong: #0d0f13;
+    --muted: #6b6f7a;
+    --faint: #8a8d99;
+    --accent-soft-bg: rgba(255,107,53,0.12);
+    --surface-2: #eeece6;
+    --input-bg: #ffffff;
+  }
+
   body {
-    background-color: #14171c;
-    color: #f0efe9;
+    background-color: var(--bg);
+    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    transition: background-color 0.2s, color 0.2s;
   }
   .mono { font-family: 'SF Mono', 'Courier New', monospace; }
 
   .container { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; position: relative; z-index: 1; min-height: 100vh; }
 
-  .env-banner { background: #1c2028; border-bottom: 1px solid #2a2f3a; padding: 0.5rem 1rem; text-align: center; font-size: 0.7rem; color: #63687a; }
+  .toolbar { max-width: 32rem; margin: 0 auto; padding: 0.75rem 1.25rem 0; display: flex; justify-content: flex-end; gap: 0.5rem; }
 
-  .title { font-size: 1.25rem; font-weight: 800; color: #f5f4f0; letter-spacing: -0.01em; }
-  .subtitle { color: #9a9fac; font-size: 0.875rem; margin-bottom: 1.5rem; }
-  .muted { color: #9a9fac; }
-  .faint { color: #63687a; }
-  .accent { color: #ff6b35; }
+  .env-banner { background: var(--bg-elevated); border-bottom: 1px solid var(--border); padding: 0.5rem 1rem; text-align: center; font-size: 0.7rem; color: var(--faint); }
 
-  .card { background-color: #1c2028; border: 1px solid #2a2f3a; border-radius: 1rem; padding: 1rem; }
+  .title { font-size: 1.25rem; font-weight: 800; color: var(--text-strong); letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); font-size: 0.875rem; margin-bottom: 1.5rem; }
+  .muted { color: var(--muted); }
+  .faint { color: var(--faint); }
+  .accent { color: var(--accent); }
+
+  .card { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; }
   .card-btn {
-    width: 100%; background-color: #1c2028; border: 1px solid #2a2f3a; border-radius: 1rem; padding: 1rem;
-    display: flex; align-items: center; justify-content: space-between; text-align: right;
-    color: #f0efe9; transition: transform 0.1s, border-color 0.15s; cursor: pointer; font-family: inherit;
+    width: 100%; background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem;
+    display: flex; align-items: center; justify-content: space-between; text-align: start;
+    color: var(--text); transition: transform 0.1s, border-color 0.15s; cursor: pointer; font-family: inherit;
   }
   .card-btn:active { transform: scale(0.98); }
 
   .dashed-btn {
-    width: 100%; background-color: #1c2028; border: 1px dashed #3a3f4a; border-radius: 1rem; padding: 1rem;
+    width: 100%; background-color: var(--bg-elevated); border: 1px dashed var(--border-dashed); border-radius: 1rem; padding: 1rem;
     display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    color: #9a9fac; font-weight: 600; font-size: 0.875rem;
+    color: var(--muted); font-weight: 600; font-size: 0.875rem;
     transition: transform 0.1s, border-color 0.15s, color 0.15s; cursor: pointer; font-family: inherit;
   }
   .dashed-btn:active { transform: scale(0.98); }
 
   .primary-btn {
-    width: 100%; background: linear-gradient(to left, #ff6b35, #ff8659); color: #14171c; border: none;
+    width: 100%; background: linear-gradient(to left, #ff6b35, #ff8659); color: var(--btn-text-on-accent); border: none;
     border-radius: 1rem; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     font-weight: 700; transition: transform 0.1s; cursor: pointer; font-family: inherit; font-size: 1rem;
   }
   .primary-btn:active { transform: scale(0.98); }
 
   .save-btn {
-    width: 100%; background-color: #ff6b35; color: #14171c; border: none; border-radius: 1rem; padding: 1rem;
+    width: 100%; background-color: var(--accent); color: var(--btn-text-on-accent); border: none; border-radius: 1rem; padding: 1rem;
     font-weight: 700; transition: transform 0.1s; cursor: pointer; font-family: inherit; font-size: 1rem;
   }
   .save-btn:active { transform: scale(0.98); }
   .save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .icon-btn {
-    width: 2rem; height: 2rem; border-radius: 9999px; background-color: #2a2f3a; color: #f0efe9;
+    width: 2rem; height: 2rem; border-radius: 9999px; background-color: var(--surface-2); color: var(--text);
     display: flex; align-items: center; justify-content: center; transition: transform 0.1s;
     border: none; cursor: pointer; font-family: inherit; font-size: 1rem;
   }
   .icon-btn:active { transform: scale(0.9); }
 
   .icon-btn-sm {
-    width: 2rem; height: 2rem; border-radius: 0.5rem; background-color: #2a2f3a; color: #9a9fac;
+    width: 2rem; height: 2rem; border-radius: 0.5rem; background-color: var(--surface-2); color: var(--muted);
     display: flex; align-items: center; justify-content: center; transition: transform 0.1s;
     flex-shrink: 0; border: none; cursor: pointer;
   }
@@ -70,40 +103,40 @@
 
   .badge {
     width: 2.25rem; height: 2.25rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;
-    font-size: 0.75rem; font-weight: 700; background-color: #2a2f3a; color: #9a9fac;
+    font-size: 0.75rem; font-weight: 700; background-color: var(--surface-2); color: var(--muted);
   }
-  .badge.done { background-color: rgba(255,107,53,0.15); color: #ff6b35; }
+  .badge.done { background-color: var(--accent-soft-bg); color: var(--accent); }
 
   .tag {
     font-size: 9px; padding: 0.125rem 0.5rem; border-radius: 9999px;
-    background-color: rgba(255,107,53,0.15); color: #ff6b35; flex-shrink: 0;
+    background-color: var(--accent-soft-bg); color: var(--accent); flex-shrink: 0;
   }
 
   .input {
-    width: 100%; background-color: #14171c; border: 1px solid #2a2f3a; border-radius: 0.75rem;
-    padding: 0.625rem 0.75rem; font-size: 0.875rem; color: #f5f4f0; caret-color: #ff6b35; font-family: inherit;
+    width: 100%; background-color: var(--input-bg); border: 1px solid var(--border); border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem; font-size: 0.875rem; color: var(--text-strong); caret-color: var(--accent); font-family: inherit;
   }
-  .input:focus { outline: none; border-color: #ff6b35; }
-  .input::placeholder { color: #63687a; opacity: 1; }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .input::placeholder { color: var(--faint); opacity: 1; }
   .input-center { text-align: center; }
 
   .input-inline {
-    width: 100%; background-color: #14171c; border: 1px solid rgba(255,107,53,0.5); border-radius: 0.5rem;
-    padding: 0.375rem 0.5rem; font-size: 0.875rem; color: #f5f4f0; caret-color: #ff6b35; font-family: inherit;
+    width: 100%; background-color: var(--input-bg); border: 1px solid rgba(255,107,53,0.5); border-radius: 0.5rem;
+    padding: 0.375rem 0.5rem; font-size: 0.875rem; color: var(--text-strong); caret-color: var(--accent); font-family: inherit;
   }
   .input-inline:focus { outline: none; }
 
-  .checkbox { width: 1rem; height: 1rem; accent-color: #ff6b35; }
+  .checkbox { width: 1rem; height: 1rem; accent-color: var(--accent); }
 
   .status-pill { font-size: 10px; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 700; white-space: nowrap; }
 
   .bottom-bar {
     position: fixed; bottom: 0; left: 0; right: 0; max-width: 32rem; margin: 0 auto; padding: 1.25rem;
-    background: linear-gradient(to top, #14171c 60%, transparent);
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
   }
 
   .back-btn {
-    display: flex; align-items: center; gap: 0.25rem; color: #9a9fac; font-size: 0.875rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.25rem; color: var(--muted); font-size: 0.875rem; margin-bottom: 1rem;
     background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
   }
 
@@ -192,13 +225,123 @@
   var DAY_ORDER = [1, 2, 3, 5, 6];
   var BAR_WEIGHT = 20;
   var STORAGE_KEY = "gym_workout_logs_v1";
+  var THEME_KEY = "gym_theme_v1";
+  var LANG_KEY = "gym_lang_v1";
 
   function barbellTotal(perSide) { return perSide * 2 + BAR_WEIGHT; }
 
+  // ---------- I18N ----------
+  var STRINGS = {
+    ar: {
+      appTitle: "سجل التمرين",
+      envBanner: "نسخة محلية مستقلة — البيانات تُحفظ بمتصفحك على هذا الجهاز فقط",
+      saveErrorBanner: "فشل الحفظ محلياً — تأكد أن مساحة تخزين المتصفح غير ممتلئة أو أن وضع التصفح الخاص غير مفعّل",
+      close: "إغلاق",
+      currentWeek: "الأسبوع الحالي",
+      exercisesWord: "تمارين",
+      freeDayBtn: "يوم حر (سفر / Full Body / Upper-Lower)",
+      overloadBtn: "Progressive Overload — أرقام الأسبوع الجاي",
+      back: "رجوع",
+      weekWord: "الأسبوع",
+      dayWord: "اليوم",
+      exerciseNamePlaceholder: "اسم التمرين",
+      newExercise: "تمرين جديد",
+      tagExtra: "إضافي",
+      tagSubstitute: "بديل",
+      targetWord: "هدف",
+      editNameTitle: "تغيير اسم التمرين",
+      deleteFromSessionTitle: "حذف من هذه الجلسة",
+      weightLabel: "الوزن",
+      perSideLabel: "(كل جهة)",
+      setsCountLabel: "عدد Sets",
+      repsPerSetLabel: "التكرارات لكل Set",
+      hitCeilingLabel: "وصلت الحد الأعلى بـ RIR 2 (جاهز لزيادة الوزن)",
+      addExerciseToSession: "إضافة تمرين لهذه الجلسة",
+      saveSession: "حفظ جلسة اليوم",
+      freeDayTitle: "يوم حر",
+      customSessionWord: "جلسة مخصصة",
+      dayNameLabel: "اسم اليوم",
+      dayNamePlaceholder: "مثال: Travel Full Body",
+      weightKgLabel: "الوزن (كيلو)",
+      addExercise: "إضافة تمرين",
+      saveFreeDay: "حفظ اليوم الحر",
+      overloadTitle: "أرقام الأسبوع الجاي",
+      overloadSubtitle: "مبني على آخر جلسة مسجلة لكل تمرين",
+      statusIncreaseWeight: "زد الوزن",
+      statusIncreaseReps: "زد تكرار",
+      statusRepeat: "كرر نفس الأرقام",
+      statusNoData: "لا يوجد سجل",
+      themeToggleTitle: "تبديل الوضع الفاتح/الداكن",
+      langToggleTitle: "English"
+    },
+    en: {
+      appTitle: "Workout Log",
+      envBanner: "Local standalone version — your data is saved in this browser on this device only",
+      saveErrorBanner: "Local save failed — make sure browser storage isn't full and private browsing isn't blocking it",
+      close: "Close",
+      currentWeek: "Current Week",
+      exercisesWord: "exercises",
+      freeDayBtn: "Free Day (Travel / Full Body / Upper-Lower)",
+      overloadBtn: "Progressive Overload — Next Week's Numbers",
+      back: "Back",
+      weekWord: "Week",
+      dayWord: "Day",
+      exerciseNamePlaceholder: "Exercise name",
+      newExercise: "New exercise",
+      tagExtra: "Extra",
+      tagSubstitute: "Swap",
+      targetWord: "Target",
+      editNameTitle: "Rename exercise",
+      deleteFromSessionTitle: "Remove from this session",
+      weightLabel: "Weight",
+      perSideLabel: "(per side)",
+      setsCountLabel: "Number of sets",
+      repsPerSetLabel: "Reps per set",
+      hitCeilingLabel: "Hit rep ceiling at RIR 2 (ready to increase weight)",
+      addExerciseToSession: "Add exercise to this session",
+      saveSession: "Save today's session",
+      freeDayTitle: "Free Day",
+      customSessionWord: "Custom session",
+      dayNameLabel: "Day name",
+      dayNamePlaceholder: "e.g. Travel Full Body",
+      weightKgLabel: "Weight (kg)",
+      addExercise: "Add exercise",
+      saveFreeDay: "Save free day",
+      overloadTitle: "Next Week's Numbers",
+      overloadSubtitle: "Based on the last logged session for each exercise",
+      statusIncreaseWeight: "Increase weight",
+      statusIncreaseReps: "Increase reps",
+      statusRepeat: "Repeat same numbers",
+      statusNoData: "No data yet",
+      themeToggleTitle: "Toggle light/dark mode",
+      langToggleTitle: "عربي"
+    }
+  };
+
+  function t(key) {
+    var s = STRINGS[state.lang][key];
+    return s !== undefined ? s : STRINGS.ar[key];
+  }
+
   function displayWeight(ex, weight) {
     if (ex.unit === "BW") return weight > 0 ? "BW +" + weight : "BW";
-    if (ex.isBarbell) return weight + " كل جهة (" + barbellTotal(weight) + " إجمالي)";
-    return weight + " كيلو";
+    if (ex.isBarbell) {
+      return state.lang === "ar"
+        ? weight + " كل جهة (" + barbellTotal(weight) + " إجمالي)"
+        : weight + " per side (" + barbellTotal(weight) + " total)";
+    }
+    return state.lang === "ar" ? weight + " كيلو" : weight + " kg";
+  }
+
+  function fmtLastTime(week, weight, reps) {
+    return state.lang === "ar"
+      ? "آخر مرة (أسبوع " + week + "): " + weight + "kg × [" + reps.join("-") + "]"
+      : "Last time (week " + week + "): " + weight + "kg × [" + reps.join("-") + "]";
+  }
+  function fmtLastTimeShort(weight, reps) {
+    return state.lang === "ar"
+      ? "آخر مرة: " + weight + "kg × [" + reps.join("-") + "]"
+      : "Last time: " + weight + "kg × [" + reps.join("-") + "]";
   }
 
   // ---------- STORAGE ----------
@@ -222,11 +365,23 @@
       return false;
     }
   }
+  function loadTheme() {
+    try { return window.localStorage.getItem(THEME_KEY) || "dark"; } catch (e) { return "dark"; }
+  }
+  function saveTheme(theme) {
+    try { window.localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+  }
+  function loadLang() {
+    try { return window.localStorage.getItem(LANG_KEY) || "ar"; } catch (e) { return "ar"; }
+  }
+  function saveLang(lang) {
+    try { window.localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+  }
 
   // ---------- PROGRESSIVE OVERLOAD ----------
   function computeSuggestion(exercise, lastEntry) {
     if (!lastEntry) {
-      return { status: "no-data", weight: exercise.weight, reps: exercise.reps, note: "لا يوجد سجل سابق — ابدأ بالأرقام الأساسية" };
+      return { status: "no-data", weight: exercise.weight, reps: exercise.reps };
     }
     var actualReps = lastEntry.actualReps, weight = lastEntry.weight, hitCeiling = lastEntry.hitCeiling;
     var targetReps = exercise.reps;
@@ -236,14 +391,31 @@
       return {
         status: "increase-weight",
         weight: Math.round((weight + 2.5) * 100) / 100,
-        reps: targetReps,
-        note: "وصلت السقف بـ RIR 2 — ارفع الوزن +2.5 كيلو وارجع لـ " + targetReps + " تكرار"
+        reps: targetReps
       };
     }
     if (allHit) {
-      return { status: "increase-reps", weight: weight, reps: targetReps + 1, note: "أنجزت كل الـ sets — زد تكرار واحد بنفس الوزن" };
+      return { status: "increase-reps", weight: weight, reps: targetReps + 1 };
     }
-    return { status: "repeat", weight: weight, reps: targetReps, note: "لم تكمل الهدف بالكامل — كرر نفس الوزن والتكرار" };
+    return { status: "repeat", weight: weight, reps: targetReps };
+  }
+
+  function suggestionNote(suggestion) {
+    if (state.lang === "ar") {
+      switch (suggestion.status) {
+        case "no-data": return "لا يوجد سجل سابق — ابدأ بالأرقام الأساسية";
+        case "increase-weight": return "وصلت السقف بـ RIR 2 — ارفع الوزن +2.5 كيلو وارجع لـ " + suggestion.reps + " تكرار";
+        case "increase-reps": return "أنجزت كل الـ sets — زد تكرار واحد بنفس الوزن";
+        case "repeat": return "لم تكمل الهدف بالكامل — كرر نفس الوزن والتكرار";
+      }
+    } else {
+      switch (suggestion.status) {
+        case "no-data": return "No previous record — start with the base numbers";
+        case "increase-weight": return "You hit the ceiling at RIR 2 — increase weight +2.5kg and reset to " + suggestion.reps + " reps";
+        case "increase-reps": return "You hit every set — add one more rep at the same weight";
+        case "repeat": return "You didn't fully hit the target — repeat the same weight and reps";
+      }
+    }
   }
 
   // ---------- DOM HELPERS ----------
@@ -307,7 +479,9 @@
     selectedDay: null,
     logs: loadLogs(),
     weekNum: 1,
-    saveError: false
+    saveError: false,
+    lang: loadLang(),
+    theme: loadTheme()
   };
   (function initWeek() {
     var maxWeek = state.logs.reduce(function (m, l) { return Math.max(m, l.week); }, 0);
@@ -351,23 +525,60 @@
     render();
   }
 
+  function applyTheme() {
+    document.documentElement.setAttribute("data-theme", state.theme);
+  }
+  function applyLang() {
+    document.documentElement.setAttribute("lang", state.lang);
+    document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
+    document.title = t("appTitle");
+  }
+  function toggleTheme() {
+    state.theme = state.theme === "dark" ? "light" : "dark";
+    saveTheme(state.theme);
+    applyTheme();
+    render();
+  }
+  function toggleLang() {
+    state.lang = state.lang === "ar" ? "en" : "ar";
+    saveLang(state.lang);
+    applyLang();
+    render();
+  }
+
   // ---------- RENDER: ROOT ----------
   function render() {
     var app = document.getElementById("app");
     app.innerHTML = "";
 
-    var root = el("div", { dir: "rtl" });
+    var root = el("div", { dir: state.lang === "ar" ? "rtl" : "ltr" });
 
-    var banner = el("div", { class: "env-banner", text: "نسخة محلية مستقلة — البيانات تُحفظ بمتصفحك على هذا الجهاز فقط" });
+    var banner = el("div", { class: "env-banner", text: t("envBanner") });
     root.appendChild(banner);
 
     if (state.saveError) {
       var errBanner = el("div", { class: "save-error-banner" }, [
-        el("div", { text: "فشل الحفظ محلياً — تأكد أن مساحة تخزين المتصفح غير ممتلئة أو أن وضع التصفح الخاص غير مفعّل" }),
-        el("button", { text: "إغلاق", onClick: function () { state.saveError = false; render(); } })
+        el("div", { text: t("saveErrorBanner") }),
+        el("button", { text: t("close"), onClick: function () { state.saveError = false; render(); } })
       ]);
       root.appendChild(errBanner);
     }
+
+    var toolbar = el("div", { class: "toolbar" });
+    var themeBtn = el("button", {
+      class: "icon-btn", title: t("themeToggleTitle"),
+      text: state.theme === "dark" ? "☀️" : "🌙"
+    });
+    themeBtn.addEventListener("click", toggleTheme);
+    var langBtn = el("button", {
+      class: "icon-btn", title: t("langToggleTitle"),
+      text: state.lang === "ar" ? "EN" : "AR",
+      style: { fontSize: "0.65rem", fontWeight: "700" }
+    });
+    langBtn.addEventListener("click", toggleLang);
+    toolbar.appendChild(themeBtn);
+    toolbar.appendChild(langBtn);
+    root.appendChild(toolbar);
 
     var view;
     if (state.view === "home") view = renderHome();
@@ -381,6 +592,7 @@
 
   // ---------- HOME VIEW ----------
   function renderHome() {
+    var isRTL = state.lang === "ar";
     var daysLoggedThisWeek = {};
     state.logs.forEach(function (l) { if (l.week === state.weekNum) daysLoggedThisWeek[l.day] = true; });
 
@@ -388,13 +600,13 @@
 
     var headerRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
       Icons.dumbbell({ size: 22, className: "accent", strokeWidth: 2.5 }),
-      el("h1", { class: "title", text: "سجل التمرين" })
+      el("h1", { class: "title", text: t("appTitle") })
     ]);
     container.appendChild(headerRow);
     container.appendChild(el("p", { class: "subtitle mono", text: "Hypertrophy · Intermediate/Advanced" }));
 
     var weekCard = el("div", { class: "card", style: { marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" } }, [
-      el("span", { class: "muted", style: { fontSize: "0.875rem" }, text: "الأسبوع الحالي" }),
+      el("span", { class: "muted", style: { fontSize: "0.875rem" }, text: t("currentWeek") }),
       el("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem" } }, [
         el("button", { class: "icon-btn", text: "−", onClick: function () { state.weekNum = Math.max(1, state.weekNum - 1); render(); } }),
         el("span", { class: "mono", style: { fontSize: "1.125rem", fontWeight: "700", width: "1.5rem", textAlign: "center" }, text: String(state.weekNum) }),
@@ -407,12 +619,12 @@
     DAY_ORDER.forEach(function (d) {
       var done = !!daysLoggedThisWeek[d];
       var badge = el("div", { class: "badge" + (done ? " done" : "") }, [done ? Icons.check({ size: 16 }) : document.createTextNode("D" + d)]);
-      var textBlock = el("div", { style: { textAlign: "right" } }, [
+      var textBlock = el("div", { style: { textAlign: "start" } }, [
         el("div", { style: { fontWeight: "600", fontSize: "0.875rem" }, text: PROGRAM[d].name }),
-        el("div", { class: "mono muted", style: { fontSize: "0.75rem" }, text: PROGRAM[d].exercises.length + " exercises" })
+        el("div", { class: "mono muted", style: { fontSize: "0.75rem" }, text: PROGRAM[d].exercises.length + " " + t("exercisesWord") })
       ]);
       var left = el("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem" } }, [badge, textBlock]);
-      var chevron = Icons.chevronRight({ size: 18, className: "faint", style: { transform: "rotate(180deg)" } });
+      var chevron = Icons.chevronRight({ size: 18, className: "faint", style: { transform: isRTL ? "rotate(180deg)" : "none" } });
       var btn = el("button", { class: "card-btn", onClick: function () { state.selectedDay = d; setView("log"); } }, [left, chevron]);
       dayList.appendChild(btn);
     });
@@ -420,14 +632,14 @@
 
     var freeDayBtn = el("button", { class: "dashed-btn", style: { marginBottom: "0.75rem" } }, [
       Icons.plane({ size: 16, strokeWidth: 2.5 }),
-      document.createTextNode("يوم حر (سفر / Full Body / Upper-Lower)")
+      document.createTextNode(t("freeDayBtn"))
     ]);
     freeDayBtn.addEventListener("click", function () { setView("freeday"); });
     container.appendChild(freeDayBtn);
 
     var overloadBtn = el("button", { class: "primary-btn" }, [
       Icons.trendingUp({ size: 18, strokeWidth: 2.5 }),
-      document.createTextNode("Progressive Overload — أرقام الأسبوع الجاي")
+      document.createTextNode(t("overloadBtn"))
     ]);
     overloadBtn.addEventListener("click", function () { setView("overload"); });
     container.appendChild(overloadBtn);
@@ -462,18 +674,19 @@
   }
 
   function renderLog() {
+    var isRTL = state.lang === "ar";
     if (!logViewState || logViewState.day !== state.selectedDay) {
       logViewState = initLogViewState(state.selectedDay);
     }
     var lvs = logViewState;
     var container = el("div", { class: "container" });
 
-    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16, style: { transform: isRTL ? "none" : "rotate(180deg)" } }), document.createTextNode(t("back"))]);
     backBtn.addEventListener("click", function () { setView("home"); });
     container.appendChild(backBtn);
 
     container.appendChild(el("h2", { style: { fontSize: "1.25rem", fontWeight: "800", marginBottom: "0.25rem" }, text: lvs.program.name }));
-    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: "Week " + state.weekNum + " · Day " + lvs.day }));
+    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: t("weekWord") + " " + state.weekNum + " · " + t("dayWord") + " " + lvs.day }));
 
     var list = el("div", { style: { display: "flex", flexDirection: "column", gap: "0.75rem" } });
 
@@ -488,11 +701,11 @@
 
       var headerRow = el("div", { style: { width: "100%", padding: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" } });
 
-      var nameBtn = el("button", { style: { flex: "1", textAlign: "right", minWidth: "0", color: "#f0efe9", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" } });
+      var nameBtn = el("button", { style: { flex: "1", textAlign: "start", minWidth: "0", color: "var(--text)", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" } });
       nameBtn.addEventListener("click", function () { lvs.expanded = isOpen ? null : ex.id; render(); });
 
       if (isEditingName) {
-        var nameInput = el("input", { type: "text", value: ex.name, placeholder: "اسم التمرين", class: "input-inline" });
+        var nameInput = el("input", { type: "text", value: ex.name, placeholder: t("exerciseNamePlaceholder"), class: "input-inline" });
         nameInput.addEventListener("click", function (e) { e.stopPropagation(); });
         nameInput.addEventListener("input", function (e) { ex.name = e.target.value; });
         nameInput.addEventListener("blur", function () { lvs.editingNameId = null; render(); });
@@ -500,26 +713,26 @@
         setTimeout(function () { nameInput.focus(); }, 0);
       } else {
         var nameRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.375rem" } }, [
-          el("div", { style: { fontWeight: "600", fontSize: "0.875rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, text: ex.name || "تمرين جديد" })
+          el("div", { style: { fontWeight: "600", fontSize: "0.875rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, text: ex.name || t("newExercise") })
         ]);
         if (wasRenamed || ex.isExtra) {
-          nameRow.appendChild(el("span", { class: "tag mono", text: ex.isExtra ? "إضافي" : "بديل" }));
+          nameRow.appendChild(el("span", { class: "tag mono", text: ex.isExtra ? t("tagExtra") : t("tagSubstitute") }));
         }
         nameBtn.appendChild(nameRow);
         var subText = ex.isExtra
           ? ex.sets + " sets"
-          : "هدف: " + ex.sets + "×" + ex.reps + " @ " + displayWeight(ex, ex.weight);
+          : t("targetWord") + ": " + ex.sets + "×" + ex.reps + " @ " + displayWeight(ex, ex.weight);
         nameBtn.appendChild(el("div", { class: "mono muted", style: { fontSize: "0.75rem", marginTop: "0.125rem" }, text: subText }));
       }
       headerRow.appendChild(nameBtn);
 
       var actions = el("div", { style: { display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: "0" } });
       if (!isEditingName) {
-        var editBtn = el("button", { class: "icon-btn-sm", text: "✎", title: "تغيير اسم التمرين" });
+        var editBtn = el("button", { class: "icon-btn-sm", text: "✎", title: t("editNameTitle") });
         editBtn.addEventListener("click", function (e) { e.stopPropagation(); lvs.editingNameId = ex.id; lvs.expanded = ex.id; render(); });
         actions.appendChild(editBtn);
       }
-      var delBtn = el("button", { class: "icon-btn-sm", title: "حذف من هذه الجلسة" }, [Icons.trash({ size: 14 })]);
+      var delBtn = el("button", { class: "icon-btn-sm", title: t("deleteFromSessionTitle") }, [Icons.trash({ size: 14 })]);
       delBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         lvs.sessionExercises = lvs.sessionExercises.filter(function (e2) { return e2.id !== ex.id; });
@@ -537,18 +750,18 @@
       card.appendChild(headerRow);
 
       if (isOpen) {
-        var body = el("div", { style: { padding: "0 1rem 1rem", borderTop: "1px solid #2a2f3a", paddingTop: "1rem" } });
+        var body = el("div", { style: { padding: "0 1rem 1rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" } });
 
         if (nameHistory) {
           body.appendChild(el("div", {
             class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.75rem" },
-            text: "آخر مرة (أسبوع " + nameHistory.week + "): " + nameHistory.weight + "kg × [" + nameHistory.actualReps.join("-") + "]"
+            text: fmtLastTime(nameHistory.week, nameHistory.weight, nameHistory.actualReps)
           }));
         }
 
         var weightRow = el("div", { style: { display: "flex", gap: "0.75rem", marginBottom: "1rem" } });
         var weightCol = el("div", { style: { flex: "1" } }, [
-          el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "الوزن " + (ex.isBarbell ? "(كل جهة)" : "") })
+          el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("weightLabel") + (ex.isBarbell ? " " + t("perSideLabel") : "") })
         ]);
         var weightInput = el("input", { type: "number", step: "0.5", value: entry.weight, class: "input mono" });
         weightInput.addEventListener("input", function (e) { entry.weight = e.target.value === "" ? "" : Number(e.target.value); });
@@ -557,7 +770,7 @@
 
         if (ex.isExtra) {
           var setsCol = el("div", { style: { width: "6rem" } }, [
-            el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "عدد Sets" })
+            el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("setsCountLabel") })
           ]);
           var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
           setsInput.addEventListener("input", function (e) {
@@ -573,7 +786,7 @@
         }
         body.appendChild(weightRow);
 
-        body.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "التكرارات لكل Set" }));
+        body.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("repsPerSetLabel") }));
         var repsGrid = el("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.5rem", marginBottom: "0.75rem" } });
         entry.reps.forEach(function (r, i) {
           var repInput = el("input", { type: "number", value: r, placeholder: "S" + (i + 1), class: "input mono input-center", style: { padding: "0.625rem 0.5rem" } });
@@ -585,12 +798,12 @@
         body.appendChild(repsGrid);
 
         if (!ex.isExtra) {
-          var ceilingLabel = el("label", { style: { display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", color: "#9a9fac", cursor: "pointer" } });
+          var ceilingLabel = el("label", { style: { display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", color: "var(--muted)", cursor: "pointer" } });
           var ceilingCheckbox = el("input", { type: "checkbox", class: "checkbox" });
           ceilingCheckbox.checked = entry.hitCeiling;
           ceilingCheckbox.addEventListener("change", function () { entry.hitCeiling = ceilingCheckbox.checked; });
           ceilingLabel.appendChild(ceilingCheckbox);
-          ceilingLabel.appendChild(document.createTextNode("وصلت الحد الأعلى بـ RIR 2 (جاهز لزيادة الوزن)"));
+          ceilingLabel.appendChild(document.createTextNode(t("hitCeilingLabel")));
           body.appendChild(ceilingLabel);
         }
 
@@ -604,7 +817,7 @@
 
     var addExtraBtn = el("button", { class: "dashed-btn", style: { marginTop: "0.75rem" } }, [
       Icons.plus({ size: 16, strokeWidth: 2.5 }),
-      document.createTextNode("إضافة تمرين لهذه الجلسة")
+      document.createTextNode(t("addExerciseToSession"))
     ]);
     addExtraBtn.addEventListener("click", function () {
       var newId = "extra_" + Date.now();
@@ -617,7 +830,7 @@
 
     var canSave = lvs.sessionExercises.every(function (ex) { return ex.name.trim().length > 0; });
     var bottomBar = el("div", { class: "bottom-bar" });
-    var saveBtn = el("button", { class: "save-btn", text: "حفظ جلسة اليوم" });
+    var saveBtn = el("button", { class: "save-btn", text: t("saveSession") });
     saveBtn.disabled = !canSave;
     saveBtn.addEventListener("click", function () {
       var newEntries = lvs.sessionExercises.map(function (ex) {
@@ -645,24 +858,25 @@
 
   // ---------- FREE DAY VIEW ----------
   function renderFreeDay() {
+    var isRTL = state.lang === "ar";
     if (!freeDayViewState) {
       freeDayViewState = { dayLabel: "", exercises: [] };
     }
     var fvs = freeDayViewState;
     var container = el("div", { class: "container" });
 
-    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16, style: { transform: isRTL ? "none" : "rotate(180deg)" } }), document.createTextNode(t("back"))]);
     backBtn.addEventListener("click", function () { setView("home"); });
     container.appendChild(backBtn);
 
     container.appendChild(el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
       Icons.plane({ size: 20, className: "accent" }),
-      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: "يوم حر" })
+      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: t("freeDayTitle") })
     ]));
-    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: "Week " + state.weekNum + " · جلسة مخصصة" }));
+    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: t("weekWord") + " " + state.weekNum + " · " + t("customSessionWord") }));
 
-    container.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "اسم اليوم" }));
-    var dayLabelInput = el("input", { type: "text", value: fvs.dayLabel, placeholder: "مثال: Travel Full Body", class: "input", style: { borderRadius: "1rem", padding: "0.75rem 1rem", marginBottom: "1.25rem" } });
+    container.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("dayNameLabel") }));
+    var dayLabelInput = el("input", { type: "text", value: fvs.dayLabel, placeholder: t("dayNamePlaceholder"), class: "input", style: { borderRadius: "1rem", padding: "0.75rem 1rem", marginBottom: "1.25rem" } });
     dayLabelInput.addEventListener("input", function (e) { fvs.dayLabel = e.target.value; });
     container.appendChild(dayLabelInput);
 
@@ -672,7 +886,7 @@
       var card = el("div", { class: "card" });
 
       var topRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" } });
-      var nameInput = el("input", { type: "text", value: ex.name, placeholder: "اسم التمرين", class: "input", style: { flex: "1" } });
+      var nameInput = el("input", { type: "text", value: ex.name, placeholder: t("exerciseNamePlaceholder"), class: "input", style: { flex: "1" } });
       nameInput.addEventListener("input", function (e) { ex.name = e.target.value; });
       topRow.appendChild(nameInput);
       var removeBtn = el("button", { class: "icon-btn-sm", style: { width: "2.25rem", height: "2.25rem", borderRadius: "0.75rem" } }, [Icons.trash({ size: 15 })]);
@@ -686,13 +900,13 @@
       if (last) {
         card.appendChild(el("div", {
           class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.75rem" },
-          text: "آخر مرة (أسبوع " + last.week + "): " + last.weight + "kg × [" + last.actualReps.join("-") + "]"
+          text: fmtLastTime(last.week, last.weight, last.actualReps)
         }));
       }
 
       var midRow = el("div", { style: { display: "flex", gap: "0.75rem", marginBottom: "0.75rem" } });
       var weightCol = el("div", { style: { flex: "1" } }, [
-        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "الوزن (كيلو)" })
+        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("weightKgLabel") })
       ]);
       var weightInput = el("input", { type: "number", step: "0.5", value: ex.weight, class: "input mono" });
       weightInput.addEventListener("input", function (e) { ex.weight = e.target.value; });
@@ -700,7 +914,7 @@
       midRow.appendChild(weightCol);
 
       var setsCol = el("div", { style: { width: "6rem" } }, [
-        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "عدد Sets" })
+        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("setsCountLabel") })
       ]);
       var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
       setsInput.addEventListener("input", function (e) {
@@ -715,7 +929,7 @@
       midRow.appendChild(setsCol);
       card.appendChild(midRow);
 
-      card.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "التكرارات لكل Set" }));
+      card.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("repsPerSetLabel") }));
       var repsGrid = el("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.5rem" } });
       ex.reps.forEach(function (r, i) {
         var repInput = el("input", { type: "number", value: r, placeholder: "S" + (i + 1), class: "input mono input-center", style: { padding: "0.625rem 0.5rem" } });
@@ -728,7 +942,7 @@
     });
     container.appendChild(list);
 
-    var addBtn = el("button", { class: "dashed-btn" }, [Icons.plus({ size: 16, strokeWidth: 2.5 }), document.createTextNode("إضافة تمرين")]);
+    var addBtn = el("button", { class: "dashed-btn" }, [Icons.plus({ size: 16, strokeWidth: 2.5 }), document.createTextNode(t("addExercise"))]);
     addBtn.addEventListener("click", function () {
       fvs.exercises.push({ localId: "custom_" + Date.now() + "_" + fvs.exercises.length, name: "", weight: "", sets: 3, reps: new Array(3).fill("") });
       render();
@@ -737,7 +951,7 @@
 
     var canSave = fvs.dayLabel.trim().length > 0 && fvs.exercises.length > 0 && fvs.exercises.every(function (e) { return e.name.trim().length > 0; });
     var bottomBar = el("div", { class: "bottom-bar" });
-    var saveBtn = el("button", { class: "save-btn", text: "حفظ اليوم الحر" });
+    var saveBtn = el("button", { class: "save-btn", text: t("saveFreeDay") });
     saveBtn.disabled = !canSave;
     saveBtn.addEventListener("click", function () {
       var newEntries = fvs.exercises.map(function (e) {
@@ -763,23 +977,24 @@
 
   // ---------- OVERLOAD VIEW ----------
   function renderOverload() {
+    var isRTL = state.lang === "ar";
     var container = el("div", { class: "container" });
 
-    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16, style: { transform: isRTL ? "none" : "rotate(180deg)" } }), document.createTextNode(t("back"))]);
     backBtn.addEventListener("click", function () { setView("home"); });
     container.appendChild(backBtn);
 
     container.appendChild(el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
       Icons.trendingUp({ size: 20, className: "accent" }),
-      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: "أرقام الأسبوع الجاي" })
+      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: t("overloadTitle") })
     ]));
-    container.appendChild(el("p", { class: "muted", style: { fontSize: "0.875rem", marginBottom: "1.5rem" }, text: "مبني على آخر جلسة مسجلة لكل تمرين" }));
+    container.appendChild(el("p", { class: "muted", style: { fontSize: "0.875rem", marginBottom: "1.5rem" }, text: t("overloadSubtitle") }));
 
     var statusColors = {
-      "increase-weight": { bg: "rgba(255,107,53,0.15)", text: "#ff6b35", label: "زد الوزن" },
-      "increase-reps": { bg: "rgba(74,222,128,0.15)", text: "#4ade80", label: "زد تكرار" },
-      "repeat": { bg: "rgba(154,159,172,0.15)", text: "#9a9fac", label: "كرر نفس الأرقام" },
-      "no-data": { bg: "rgba(99,104,122,0.15)", text: "#63687a", label: "لا يوجد سجل" }
+      "increase-weight": { bg: "rgba(255,107,53,0.15)", text: "#ff6b35", label: t("statusIncreaseWeight") },
+      "increase-reps": { bg: "rgba(74,222,128,0.15)", text: "#4ade80", label: t("statusIncreaseReps") },
+      "repeat": { bg: "rgba(154,159,172,0.15)", text: "#9a9fac", label: t("statusRepeat") },
+      "no-data": { bg: "rgba(99,104,122,0.15)", text: "#63687a", label: t("statusNoData") }
     };
 
     var groupsWrap = el("div", { style: { display: "flex", flexDirection: "column", gap: "1.5rem" } });
@@ -805,13 +1020,13 @@
         if (last) {
           card.appendChild(el("div", {
             class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.25rem" },
-            text: "آخر مرة: " + last.weight + "kg × [" + last.actualReps.join("-") + "]"
+            text: fmtLastTimeShort(last.weight, last.actualReps)
           }));
         }
 
         var unitSuffix = ex.unit === "BW" ? "" : "kg";
-        card.appendChild(el("div", { class: "mono", style: { fontSize: "0.875rem", fontWeight: "700", color: "#f5f4f0" }, text: "→ " + suggestion.weight + unitSuffix + " × " + suggestion.reps + " reps" }));
-        card.appendChild(el("div", { class: "muted", style: { fontSize: "0.75rem", marginTop: "0.25rem" }, text: suggestion.note }));
+        card.appendChild(el("div", { class: "mono", style: { fontSize: "0.875rem", fontWeight: "700", color: "var(--text-strong)" }, text: "→ " + suggestion.weight + unitSuffix + " × " + suggestion.reps + " reps" }));
+        card.appendChild(el("div", { class: "muted", style: { fontSize: "0.75rem", marginTop: "0.25rem" }, text: suggestionNote(suggestion) }));
 
         rowsWrap.appendChild(card);
       });
@@ -825,6 +1040,8 @@
   }
 
   // ---------- INIT ----------
+  applyTheme();
+  applyLang();
   render();
 })();
 </script>
