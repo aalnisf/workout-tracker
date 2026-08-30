@@ -272,7 +272,12 @@
       statusRepeat: "كرر نفس الأرقام",
       statusNoData: "لا يوجد سجل",
       themeToggleTitle: "تبديل الوضع الفاتح/الداكن",
-      langToggleTitle: "English"
+      langToggleTitle: "English",
+      exportData: "تصدير JSON",
+      importData: "استيراد JSON",
+      importConfirmMsg: "سيتم استبدال كل البيانات الحالية بالبيانات المستوردة. هل تريد المتابعة؟",
+      importSuccessMsg: "تم استيراد البيانات بنجاح",
+      importErrorMsg: "فشل استيراد الملف — تأكد أنه ملف JSON صحيح تم تصديره من هذا التطبيق"
     },
     en: {
       appTitle: "Workout Log",
@@ -314,7 +319,12 @@
       statusRepeat: "Repeat same numbers",
       statusNoData: "No data yet",
       themeToggleTitle: "Toggle light/dark mode",
-      langToggleTitle: "عربي"
+      langToggleTitle: "عربي",
+      exportData: "Export JSON",
+      importData: "Import JSON",
+      importConfirmMsg: "This will replace all current data with the imported data. Continue?",
+      importSuccessMsg: "Data imported successfully",
+      importErrorMsg: "Failed to import file — make sure it's a valid JSON file exported from this app"
     }
   };
 
@@ -376,6 +386,54 @@
   }
   function saveLang(lang) {
     try { window.localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+  }
+
+  // ---------- EXPORT / IMPORT ----------
+  function exportData() {
+    var payload = { version: 1, exportedAt: new Date().toISOString(), logs: state.logs };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "workout-tracker-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function isValidLogEntry(l) {
+    return l && typeof l === "object" && typeof l.exerciseId === "string" &&
+      typeof l.week === "number" && Array.isArray(l.actualReps);
+  }
+
+  function importDataFromFile(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var logs;
+      try {
+        var parsed = JSON.parse(e.target.result);
+        logs = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.logs) ? parsed.logs : null);
+        if (!logs || !logs.every(isValidLogEntry)) throw new Error("invalid format");
+      } catch (err) {
+        window.alert(t("importErrorMsg"));
+        return;
+      }
+      if (!window.confirm(t("importConfirmMsg"))) return;
+      var ok = saveLogsToStorage(logs);
+      if (ok) {
+        state.logs = logs;
+        var maxWeek = logs.reduce(function (m, l) { return Math.max(m, l.week); }, 0);
+        state.weekNum = maxWeek + 1 > 0 ? maxWeek + 1 : 1;
+        state.saveError = false;
+        render();
+        window.alert(t("importSuccessMsg"));
+      } else {
+        state.saveError = true;
+        render();
+      }
+    };
+    reader.readAsText(file);
   }
 
   // ---------- PROGRESSIVE OVERLOAD ----------
@@ -470,7 +528,9 @@
     dumbbell: function (o) { return svgIcon('<path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/>', o); },
     plus: function (o) { return svgIcon('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', o); },
     trash: function (o) { return svgIcon('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>', o); },
-    plane: function (o) { return svgIcon('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>', o); }
+    plane: function (o) { return svgIcon('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>', o); },
+    download: function (o) { return svgIcon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>', o); },
+    upload: function (o) { return svgIcon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>', o); }
   };
 
   // ---------- APP STATE ----------
@@ -643,6 +703,28 @@
     ]);
     overloadBtn.addEventListener("click", function () { setView("overload"); });
     container.appendChild(overloadBtn);
+
+    var importInput = el("input", { type: "file", accept: "application/json,.json", style: { display: "none" } });
+    importInput.addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (file) importDataFromFile(file);
+      importInput.value = "";
+    });
+
+    var exportBtn = el("button", { class: "dashed-btn", style: { flex: "1" } }, [
+      Icons.download({ size: 16, strokeWidth: 2.5 }),
+      document.createTextNode(t("exportData"))
+    ]);
+    exportBtn.addEventListener("click", exportData);
+
+    var importBtn = el("button", { class: "dashed-btn", style: { flex: "1" } }, [
+      Icons.upload({ size: 16, strokeWidth: 2.5 }),
+      document.createTextNode(t("importData"))
+    ]);
+    importBtn.addEventListener("click", function () { importInput.click(); });
+
+    var dataRow = el("div", { style: { display: "flex", gap: "0.625rem", marginTop: "0.75rem" } }, [exportBtn, importBtn, importInput]);
+    container.appendChild(dataRow);
 
     return container;
   }
