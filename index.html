@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>سجل التمرين</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background-color: #14171c;
+    color: #f0efe9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .mono { font-family: 'SF Mono', 'Courier New', monospace; }
+
+  .container { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; position: relative; z-index: 1; min-height: 100vh; }
+
+  .env-banner { background: #1c2028; border-bottom: 1px solid #2a2f3a; padding: 0.5rem 1rem; text-align: center; font-size: 0.7rem; color: #63687a; }
+
+  .title { font-size: 1.25rem; font-weight: 800; color: #f5f4f0; letter-spacing: -0.01em; }
+  .subtitle { color: #9a9fac; font-size: 0.875rem; margin-bottom: 1.5rem; }
+  .muted { color: #9a9fac; }
+  .faint { color: #63687a; }
+  .accent { color: #ff6b35; }
+
+  .card { background-color: #1c2028; border: 1px solid #2a2f3a; border-radius: 1rem; padding: 1rem; }
+  .card-btn {
+    width: 100%; background-color: #1c2028; border: 1px solid #2a2f3a; border-radius: 1rem; padding: 1rem;
+    display: flex; align-items: center; justify-content: space-between; text-align: right;
+    color: #f0efe9; transition: transform 0.1s, border-color 0.15s; cursor: pointer; font-family: inherit;
+  }
+  .card-btn:active { transform: scale(0.98); }
+
+  .dashed-btn {
+    width: 100%; background-color: #1c2028; border: 1px dashed #3a3f4a; border-radius: 1rem; padding: 1rem;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    color: #9a9fac; font-weight: 600; font-size: 0.875rem;
+    transition: transform 0.1s, border-color 0.15s, color 0.15s; cursor: pointer; font-family: inherit;
+  }
+  .dashed-btn:active { transform: scale(0.98); }
+
+  .primary-btn {
+    width: 100%; background: linear-gradient(to left, #ff6b35, #ff8659); color: #14171c; border: none;
+    border-radius: 1rem; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    font-weight: 700; transition: transform 0.1s; cursor: pointer; font-family: inherit; font-size: 1rem;
+  }
+  .primary-btn:active { transform: scale(0.98); }
+
+  .save-btn {
+    width: 100%; background-color: #ff6b35; color: #14171c; border: none; border-radius: 1rem; padding: 1rem;
+    font-weight: 700; transition: transform 0.1s; cursor: pointer; font-family: inherit; font-size: 1rem;
+  }
+  .save-btn:active { transform: scale(0.98); }
+  .save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .icon-btn {
+    width: 2rem; height: 2rem; border-radius: 9999px; background-color: #2a2f3a; color: #f0efe9;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.1s;
+    border: none; cursor: pointer; font-family: inherit; font-size: 1rem;
+  }
+  .icon-btn:active { transform: scale(0.9); }
+
+  .icon-btn-sm {
+    width: 2rem; height: 2rem; border-radius: 0.5rem; background-color: #2a2f3a; color: #9a9fac;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.1s;
+    flex-shrink: 0; border: none; cursor: pointer;
+  }
+  .icon-btn-sm:active { transform: scale(0.9); }
+
+  .badge {
+    width: 2.25rem; height: 2.25rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; background-color: #2a2f3a; color: #9a9fac;
+  }
+  .badge.done { background-color: rgba(255,107,53,0.15); color: #ff6b35; }
+
+  .tag {
+    font-size: 9px; padding: 0.125rem 0.5rem; border-radius: 9999px;
+    background-color: rgba(255,107,53,0.15); color: #ff6b35; flex-shrink: 0;
+  }
+
+  .input {
+    width: 100%; background-color: #14171c; border: 1px solid #2a2f3a; border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem; font-size: 0.875rem; color: #f5f4f0; caret-color: #ff6b35; font-family: inherit;
+  }
+  .input:focus { outline: none; border-color: #ff6b35; }
+  .input::placeholder { color: #63687a; opacity: 1; }
+  .input-center { text-align: center; }
+
+  .input-inline {
+    width: 100%; background-color: #14171c; border: 1px solid rgba(255,107,53,0.5); border-radius: 0.5rem;
+    padding: 0.375rem 0.5rem; font-size: 0.875rem; color: #f5f4f0; caret-color: #ff6b35; font-family: inherit;
+  }
+  .input-inline:focus { outline: none; }
+
+  .checkbox { width: 1rem; height: 1rem; accent-color: #ff6b35; }
+
+  .status-pill { font-size: 10px; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 700; white-space: nowrap; }
+
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; max-width: 32rem; margin: 0 auto; padding: 1.25rem;
+    background: linear-gradient(to top, #14171c 60%, transparent);
+  }
+
+  .back-btn {
+    display: flex; align-items: center; gap: 0.25rem; color: #9a9fac; font-size: 0.875rem; margin-bottom: 1rem;
+    background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+  }
+
+  .save-error-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #ff6b35; color: #14171c;
+    padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; font-weight: 700;
+  }
+  .save-error-banner button { margin-top: 0.375rem; text-decoration: underline; background: none; border: none; color: inherit; cursor: pointer; font-family: inherit; }
+
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+
+  svg { display: block; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- PROGRAM DATA ----------
+  var PROGRAM = {
+    1: {
+      name: "Heavy Push",
+      exercises: [
+        { id: "d1e1", name: "Incline Barbell Press", sets: 4, reps: 8, weight: 22.5, isBarbell: true, unit: "kg/side" },
+        { id: "d1e2", name: "Flat DB Press", sets: 4, reps: 8, weight: 28, unit: "kg" },
+        { id: "d1e3a", name: "Shoulder Press Machine", sets: 3, reps: 8, weight: 32.5, unit: "kg" },
+        { id: "d1e3b", name: "Leg Raise", sets: 3, reps: 20, weight: 0, unit: "BW" },
+        { id: "d1e4", name: "Lateral Raise Machine", sets: 3, reps: 15, weight: 42.5, unit: "kg" },
+        { id: "d1e5", name: "Cable Pushdown Rope", sets: 3, reps: 12, weight: 16.25, unit: "kg" }
+      ]
+    },
+    2: {
+      name: "Heavy Pull",
+      exercises: [
+        { id: "d2e1", name: "Pull Ups", sets: 4, reps: 8, weight: 0, unit: "BW" },
+        { id: "d2e2", name: "T-Bar Row Narrow", sets: 3, reps: 10, weight: 52.5, unit: "kg" },
+        { id: "d2e3", name: "High Row Machine", sets: 3, reps: 12, weight: 40, unit: "kg/side" },
+        { id: "d2e4", name: "Seated Cable Row MAG S", sets: 3, reps: 12, weight: 57, unit: "kg" },
+        { id: "d2e5", name: "Face Pull (cables)", sets: 3, reps: 15, weight: 8.25, unit: "kg" },
+        { id: "d2e6", name: "DB Shrugs", sets: 3, reps: 15, weight: 40, unit: "kg+pause" }
+      ]
+    },
+    3: {
+      name: "Legs",
+      exercises: [
+        { id: "d3e1", name: "Prone Leg Curl", sets: 3, reps: 15, weight: 42.5, unit: "kg" },
+        { id: "d3e2", name: "Leg Press (feet high)", sets: 4, reps: 12, weight: 80, unit: "kg" },
+        { id: "d3e3", name: "Romanian Deadlift", sets: 3, reps: 10, weight: 57.5, unit: "kg" },
+        { id: "d3e4", name: "Leg Extension", sets: 3, reps: 15, weight: 50, unit: "kg" },
+        { id: "d3e5a", name: "Hip Abduction", sets: 2, reps: 20, weight: 110, unit: "kg" },
+        { id: "d3e5b", name: "Hip Adduction", sets: 2, reps: 20, weight: 110, unit: "kg" },
+        { id: "d3e6", name: "Calf Raise", sets: 4, reps: 15, weight: 130, unit: "kg" }
+      ]
+    },
+    5: {
+      name: "Chest + Back Volume",
+      exercises: [
+        { id: "d5e1a", name: "Pec Dec", sets: 4, reps: 12, weight: 50, unit: "kg" },
+        { id: "d5e1b", name: "Lat Pulldown MAG Supinate", sets: 4, reps: 12, weight: 57, unit: "kg" },
+        { id: "d5e2", name: "Incline DB Press", sets: 3, reps: 12, weight: 24, unit: "kg" },
+        { id: "d5e3", name: "Straight Arm Pulldown", sets: 3, reps: 12, weight: 23, unit: "kg" },
+        { id: "d5e4", name: "Cable Crossover Seated", sets: 3, reps: 12, weight: 10, unit: "kg" },
+        { id: "d5e5", name: "Seated Cable Row MAG S", sets: 3, reps: 12, weight: 47.5, unit: "kg" },
+        { id: "d5e6", name: "Torso Rotation", sets: 3, reps: 15, weight: 35, unit: "kg" }
+      ]
+    },
+    6: {
+      name: "Arms + Shoulders",
+      exercises: [
+        { id: "d6e1", name: "Lateral Raise Cable + Cuffs", sets: 4, reps: 15, weight: 8.75, unit: "kg" },
+        { id: "d6e2", name: "Rear Delt Machine", sets: 4, reps: 15, weight: 45, unit: "kg" },
+        { id: "d6e3", name: "Cable Overhead Triceps Extension", sets: 4, reps: 12, weight: 14, unit: "kg" },
+        { id: "d6e4", name: "Triceps Press Machine (Reverse Grip)", sets: 3, reps: 10, weight: 102.5, unit: "kg" },
+        { id: "d6e5", name: "Cable Pushdown Rope", sets: 3, reps: 15, weight: 15, unit: "kg" },
+        { id: "d6e6", name: "Incline DB Curl", sets: 3, reps: 10, weight: 12, unit: "kg" },
+        { id: "d6e7", name: "EZ Bar Preacher Curl", sets: 3, reps: 10, weight: 22.5, unit: "kg" },
+        { id: "d6e8", name: "Oblique / Kneeling Cable Crunch", sets: 3, reps: 15, weight: 5, unit: "kg" }
+      ]
+    }
+  };
+
+  var DAY_ORDER = [1, 2, 3, 5, 6];
+  var BAR_WEIGHT = 20;
+  var STORAGE_KEY = "gym_workout_logs_v1";
+
+  function barbellTotal(perSide) { return perSide * 2 + BAR_WEIGHT; }
+
+  function displayWeight(ex, weight) {
+    if (ex.unit === "BW") return weight > 0 ? "BW +" + weight : "BW";
+    if (ex.isBarbell) return weight + " كل جهة (" + barbellTotal(weight) + " إجمالي)";
+    return weight + " كيلو";
+  }
+
+  // ---------- STORAGE ----------
+  function loadLogs() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("failed to load logs", e);
+      return [];
+    }
+  }
+  function saveLogsToStorage(logs) {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+      return true;
+    } catch (e) {
+      console.error("failed to save logs", e);
+      return false;
+    }
+  }
+
+  // ---------- PROGRESSIVE OVERLOAD ----------
+  function computeSuggestion(exercise, lastEntry) {
+    if (!lastEntry) {
+      return { status: "no-data", weight: exercise.weight, reps: exercise.reps, note: "لا يوجد سجل سابق — ابدأ بالأرقام الأساسية" };
+    }
+    var actualReps = lastEntry.actualReps, weight = lastEntry.weight, hitCeiling = lastEntry.hitCeiling;
+    var targetReps = exercise.reps;
+    var allHit = actualReps.every(function (r) { return r >= targetReps; });
+
+    if (hitCeiling && allHit) {
+      return {
+        status: "increase-weight",
+        weight: Math.round((weight + 2.5) * 100) / 100,
+        reps: targetReps,
+        note: "وصلت السقف بـ RIR 2 — ارفع الوزن +2.5 كيلو وارجع لـ " + targetReps + " تكرار"
+      };
+    }
+    if (allHit) {
+      return { status: "increase-reps", weight: weight, reps: targetReps + 1, note: "أنجزت كل الـ sets — زد تكرار واحد بنفس الوزن" };
+    }
+    return { status: "repeat", weight: weight, reps: targetReps, note: "لم تكمل الهدف بالكامل — كرر نفس الوزن والتكرار" };
+  }
+
+  // ---------- DOM HELPERS ----------
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    attrs = attrs || {};
+    for (var key in attrs) {
+      if (key === "class") node.className = attrs[key];
+      else if (key === "text") node.textContent = attrs[key];
+      else if (key === "html") node.innerHTML = attrs[key];
+      else if (key.indexOf("on") === 0 && typeof attrs[key] === "function") {
+        node.addEventListener(key.slice(2).toLowerCase(), attrs[key]);
+      } else if (key === "style" && typeof attrs[key] === "object") {
+        for (var sKey in attrs[key]) node.style[sKey] = attrs[key][sKey];
+      } else {
+        node.setAttribute(key, attrs[key]);
+      }
+    }
+    children = children || [];
+    children.forEach(function (child) {
+      if (child === null || child === undefined) return;
+      if (typeof child === "string") node.appendChild(document.createTextNode(child));
+      else node.appendChild(child);
+    });
+    return node;
+  }
+
+  function svgIcon(pathHtml, opts) {
+    opts = opts || {};
+    var size = opts.size || 18;
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("width", size);
+    svg.setAttribute("height", size);
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", opts.strokeWidth || 2);
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    if (opts.className) svg.setAttribute("class", opts.className);
+    if (opts.style) for (var k in opts.style) svg.style[k] = opts.style[k];
+    svg.innerHTML = pathHtml;
+    return svg;
+  }
+
+  var Icons = {
+    chevronRight: function (o) { return svgIcon('<polyline points="9 18 15 12 9 6"/>', o); },
+    chevronDown: function (o) { return svgIcon('<polyline points="6 9 12 15 18 9"/>', o); },
+    check: function (o) { return svgIcon('<polyline points="20 6 9 17 4 12"/>', o); },
+    trendingUp: function (o) { return svgIcon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>', o); },
+    dumbbell: function (o) { return svgIcon('<path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/>', o); },
+    plus: function (o) { return svgIcon('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', o); },
+    trash: function (o) { return svgIcon('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>', o); },
+    plane: function (o) { return svgIcon('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>', o); }
+  };
+
+  // ---------- APP STATE ----------
+  var state = {
+    view: "home",
+    selectedDay: null,
+    logs: loadLogs(),
+    weekNum: 1,
+    saveError: false
+  };
+  (function initWeek() {
+    var maxWeek = state.logs.reduce(function (m, l) { return Math.max(m, l.week); }, 0);
+    state.weekNum = maxWeek + 1 > 0 ? maxWeek + 1 : 1;
+  })();
+
+  var logViewState = null;
+  var freeDayViewState = null;
+
+  function lastEntryFor(exId) {
+    var entries = state.logs.filter(function (l) { return l.exerciseId === exId; }).sort(function (a, b) { return b.week - a.week; });
+    return entries[0] || null;
+  }
+  function lastEntryForName(name) {
+    var key = name.trim().toLowerCase();
+    var entries = state.logs
+      .filter(function (l) { return l.isCustom && l.exerciseName.trim().toLowerCase() === key; })
+      .sort(function (a, b) { return b.week - a.week; });
+    return entries[0] || null;
+  }
+
+  function persist(newEntries) {
+    var updated = state.logs.concat(newEntries);
+    var ok = saveLogsToStorage(updated);
+    if (ok) {
+      state.logs = updated;
+      state.saveError = false;
+      state.view = "home";
+      logViewState = null;
+      freeDayViewState = null;
+    } else {
+      state.saveError = true;
+    }
+    render();
+  }
+
+  function setView(v) {
+    state.view = v;
+    if (v !== "log") logViewState = null;
+    if (v !== "freeday") freeDayViewState = null;
+    render();
+  }
+
+  // ---------- RENDER: ROOT ----------
+  function render() {
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+
+    var root = el("div", { dir: "rtl" });
+
+    var banner = el("div", { class: "env-banner", text: "نسخة محلية مستقلة — البيانات تُحفظ بمتصفحك على هذا الجهاز فقط" });
+    root.appendChild(banner);
+
+    if (state.saveError) {
+      var errBanner = el("div", { class: "save-error-banner" }, [
+        el("div", { text: "فشل الحفظ محلياً — تأكد أن مساحة تخزين المتصفح غير ممتلئة أو أن وضع التصفح الخاص غير مفعّل" }),
+        el("button", { text: "إغلاق", onClick: function () { state.saveError = false; render(); } })
+      ]);
+      root.appendChild(errBanner);
+    }
+
+    var view;
+    if (state.view === "home") view = renderHome();
+    else if (state.view === "log") view = renderLog();
+    else if (state.view === "overload") view = renderOverload();
+    else if (state.view === "freeday") view = renderFreeDay();
+    root.appendChild(view);
+
+    app.appendChild(root);
+  }
+
+  // ---------- HOME VIEW ----------
+  function renderHome() {
+    var daysLoggedThisWeek = {};
+    state.logs.forEach(function (l) { if (l.week === state.weekNum) daysLoggedThisWeek[l.day] = true; });
+
+    var container = el("div", { class: "container" });
+
+    var headerRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
+      Icons.dumbbell({ size: 22, className: "accent", strokeWidth: 2.5 }),
+      el("h1", { class: "title", text: "سجل التمرين" })
+    ]);
+    container.appendChild(headerRow);
+    container.appendChild(el("p", { class: "subtitle mono", text: "Hypertrophy · Intermediate/Advanced" }));
+
+    var weekCard = el("div", { class: "card", style: { marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" } }, [
+      el("span", { class: "muted", style: { fontSize: "0.875rem" }, text: "الأسبوع الحالي" }),
+      el("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem" } }, [
+        el("button", { class: "icon-btn", text: "−", onClick: function () { state.weekNum = Math.max(1, state.weekNum - 1); render(); } }),
+        el("span", { class: "mono", style: { fontSize: "1.125rem", fontWeight: "700", width: "1.5rem", textAlign: "center" }, text: String(state.weekNum) }),
+        el("button", { class: "icon-btn", text: "+", onClick: function () { state.weekNum += 1; render(); } })
+      ])
+    ]);
+    container.appendChild(weekCard);
+
+    var dayList = el("div", { style: { display: "flex", flexDirection: "column", gap: "0.625rem", marginBottom: "1.5rem" } });
+    DAY_ORDER.forEach(function (d) {
+      var done = !!daysLoggedThisWeek[d];
+      var badge = el("div", { class: "badge" + (done ? " done" : "") }, [done ? Icons.check({ size: 16 }) : document.createTextNode("D" + d)]);
+      var textBlock = el("div", { style: { textAlign: "right" } }, [
+        el("div", { style: { fontWeight: "600", fontSize: "0.875rem" }, text: PROGRAM[d].name }),
+        el("div", { class: "mono muted", style: { fontSize: "0.75rem" }, text: PROGRAM[d].exercises.length + " exercises" })
+      ]);
+      var left = el("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem" } }, [badge, textBlock]);
+      var chevron = Icons.chevronRight({ size: 18, className: "faint", style: { transform: "rotate(180deg)" } });
+      var btn = el("button", { class: "card-btn", onClick: function () { state.selectedDay = d; setView("log"); } }, [left, chevron]);
+      dayList.appendChild(btn);
+    });
+    container.appendChild(dayList);
+
+    var freeDayBtn = el("button", { class: "dashed-btn", style: { marginBottom: "0.75rem" } }, [
+      Icons.plane({ size: 16, strokeWidth: 2.5 }),
+      document.createTextNode("يوم حر (سفر / Full Body / Upper-Lower)")
+    ]);
+    freeDayBtn.addEventListener("click", function () { setView("freeday"); });
+    container.appendChild(freeDayBtn);
+
+    var overloadBtn = el("button", { class: "primary-btn" }, [
+      Icons.trendingUp({ size: 18, strokeWidth: 2.5 }),
+      document.createTextNode("Progressive Overload — أرقام الأسبوع الجاي")
+    ]);
+    overloadBtn.addEventListener("click", function () { setView("overload"); });
+    container.appendChild(overloadBtn);
+
+    return container;
+  }
+
+  // ---------- LOG VIEW ----------
+  function initLogViewState(day) {
+    var program = PROGRAM[day];
+    var sessionExercises = program.exercises.map(function (ex) {
+      var copy = {};
+      for (var k in ex) copy[k] = ex[k];
+      copy.isExtra = false;
+      copy.originalName = ex.name;
+      return copy;
+    });
+    var entries = {};
+    program.exercises.forEach(function (ex) {
+      var last = lastEntryFor(ex.id);
+      var sugg = computeSuggestion(ex, last);
+      entries[ex.id] = { weight: sugg.weight, reps: new Array(ex.sets).fill(sugg.reps), hitCeiling: false };
+    });
+    return {
+      day: day,
+      program: program,
+      sessionExercises: sessionExercises,
+      entries: entries,
+      expanded: program.exercises[0] ? program.exercises[0].id : null,
+      editingNameId: null
+    };
+  }
+
+  function renderLog() {
+    if (!logViewState || logViewState.day !== state.selectedDay) {
+      logViewState = initLogViewState(state.selectedDay);
+    }
+    var lvs = logViewState;
+    var container = el("div", { class: "container" });
+
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    backBtn.addEventListener("click", function () { setView("home"); });
+    container.appendChild(backBtn);
+
+    container.appendChild(el("h2", { style: { fontSize: "1.25rem", fontWeight: "800", marginBottom: "0.25rem" }, text: lvs.program.name }));
+    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: "Week " + state.weekNum + " · Day " + lvs.day }));
+
+    var list = el("div", { style: { display: "flex", flexDirection: "column", gap: "0.75rem" } });
+
+    lvs.sessionExercises.forEach(function (ex) {
+      var isOpen = lvs.expanded === ex.id;
+      var entry = lvs.entries[ex.id];
+      var wasRenamed = !ex.isExtra && ex.name !== ex.originalName;
+      var isEditingName = lvs.editingNameId === ex.id;
+      var nameHistory = (ex.isExtra || wasRenamed) && ex.name.trim() ? lastEntryForName(ex.name) : null;
+
+      var card = el("div", { class: "card", style: { padding: "0", overflow: "hidden" } });
+
+      var headerRow = el("div", { style: { width: "100%", padding: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" } });
+
+      var nameBtn = el("button", { style: { flex: "1", textAlign: "right", minWidth: "0", color: "#f0efe9", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" } });
+      nameBtn.addEventListener("click", function () { lvs.expanded = isOpen ? null : ex.id; render(); });
+
+      if (isEditingName) {
+        var nameInput = el("input", { type: "text", value: ex.name, placeholder: "اسم التمرين", class: "input-inline" });
+        nameInput.addEventListener("click", function (e) { e.stopPropagation(); });
+        nameInput.addEventListener("input", function (e) { ex.name = e.target.value; });
+        nameInput.addEventListener("blur", function () { lvs.editingNameId = null; render(); });
+        nameBtn.appendChild(nameInput);
+        setTimeout(function () { nameInput.focus(); }, 0);
+      } else {
+        var nameRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.375rem" } }, [
+          el("div", { style: { fontWeight: "600", fontSize: "0.875rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, text: ex.name || "تمرين جديد" })
+        ]);
+        if (wasRenamed || ex.isExtra) {
+          nameRow.appendChild(el("span", { class: "tag mono", text: ex.isExtra ? "إضافي" : "بديل" }));
+        }
+        nameBtn.appendChild(nameRow);
+        var subText = ex.isExtra
+          ? ex.sets + " sets"
+          : "هدف: " + ex.sets + "×" + ex.reps + " @ " + displayWeight(ex, ex.weight);
+        nameBtn.appendChild(el("div", { class: "mono muted", style: { fontSize: "0.75rem", marginTop: "0.125rem" }, text: subText }));
+      }
+      headerRow.appendChild(nameBtn);
+
+      var actions = el("div", { style: { display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: "0" } });
+      if (!isEditingName) {
+        var editBtn = el("button", { class: "icon-btn-sm", text: "✎", title: "تغيير اسم التمرين" });
+        editBtn.addEventListener("click", function (e) { e.stopPropagation(); lvs.editingNameId = ex.id; lvs.expanded = ex.id; render(); });
+        actions.appendChild(editBtn);
+      }
+      var delBtn = el("button", { class: "icon-btn-sm", title: "حذف من هذه الجلسة" }, [Icons.trash({ size: 14 })]);
+      delBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        lvs.sessionExercises = lvs.sessionExercises.filter(function (e2) { return e2.id !== ex.id; });
+        render();
+      });
+      actions.appendChild(delBtn);
+
+      var chevronBtn = el("button", { style: { padding: "0.25rem", background: "none", border: "none", cursor: "pointer" } }, [
+        Icons.chevronDown({ size: 18, className: "faint", style: { transition: "transform 0.15s", transform: isOpen ? "rotate(180deg)" : "none" } })
+      ]);
+      chevronBtn.addEventListener("click", function () { lvs.expanded = isOpen ? null : ex.id; render(); });
+      actions.appendChild(chevronBtn);
+
+      headerRow.appendChild(actions);
+      card.appendChild(headerRow);
+
+      if (isOpen) {
+        var body = el("div", { style: { padding: "0 1rem 1rem", borderTop: "1px solid #2a2f3a", paddingTop: "1rem" } });
+
+        if (nameHistory) {
+          body.appendChild(el("div", {
+            class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.75rem" },
+            text: "آخر مرة (أسبوع " + nameHistory.week + "): " + nameHistory.weight + "kg × [" + nameHistory.actualReps.join("-") + "]"
+          }));
+        }
+
+        var weightRow = el("div", { style: { display: "flex", gap: "0.75rem", marginBottom: "1rem" } });
+        var weightCol = el("div", { style: { flex: "1" } }, [
+          el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "الوزن " + (ex.isBarbell ? "(كل جهة)" : "") })
+        ]);
+        var weightInput = el("input", { type: "number", step: "0.5", value: entry.weight, class: "input mono" });
+        weightInput.addEventListener("input", function (e) { entry.weight = e.target.value === "" ? "" : Number(e.target.value); });
+        weightCol.appendChild(weightInput);
+        weightRow.appendChild(weightCol);
+
+        if (ex.isExtra) {
+          var setsCol = el("div", { style: { width: "6rem" } }, [
+            el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "عدد Sets" })
+          ]);
+          var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
+          setsInput.addEventListener("input", function (e) {
+            var n = Math.max(1, Math.min(8, Number(e.target.value) || 1));
+            ex.sets = n;
+            var newReps = [];
+            for (var i = 0; i < n; i++) newReps.push(entry.reps[i] !== undefined ? entry.reps[i] : "");
+            entry.reps = newReps;
+            render();
+          });
+          setsCol.appendChild(setsInput);
+          weightRow.appendChild(setsCol);
+        }
+        body.appendChild(weightRow);
+
+        body.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "التكرارات لكل Set" }));
+        var repsGrid = el("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.5rem", marginBottom: "0.75rem" } });
+        entry.reps.forEach(function (r, i) {
+          var repInput = el("input", { type: "number", value: r, placeholder: "S" + (i + 1), class: "input mono input-center", style: { padding: "0.625rem 0.5rem" } });
+          repInput.addEventListener("input", function (e) {
+            entry.reps[i] = e.target.value === "" ? "" : Number(e.target.value);
+          });
+          repsGrid.appendChild(repInput);
+        });
+        body.appendChild(repsGrid);
+
+        if (!ex.isExtra) {
+          var ceilingLabel = el("label", { style: { display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", color: "#9a9fac", cursor: "pointer" } });
+          var ceilingCheckbox = el("input", { type: "checkbox", class: "checkbox" });
+          ceilingCheckbox.checked = entry.hitCeiling;
+          ceilingCheckbox.addEventListener("change", function () { entry.hitCeiling = ceilingCheckbox.checked; });
+          ceilingLabel.appendChild(ceilingCheckbox);
+          ceilingLabel.appendChild(document.createTextNode("وصلت الحد الأعلى بـ RIR 2 (جاهز لزيادة الوزن)"));
+          body.appendChild(ceilingLabel);
+        }
+
+        card.appendChild(body);
+      }
+
+      list.appendChild(card);
+    });
+
+    container.appendChild(list);
+
+    var addExtraBtn = el("button", { class: "dashed-btn", style: { marginTop: "0.75rem" } }, [
+      Icons.plus({ size: 16, strokeWidth: 2.5 }),
+      document.createTextNode("إضافة تمرين لهذه الجلسة")
+    ]);
+    addExtraBtn.addEventListener("click", function () {
+      var newId = "extra_" + Date.now();
+      lvs.sessionExercises.push({ id: newId, name: "", sets: 3, reps: 10, weight: 0, unit: "kg", isExtra: true, originalName: "" });
+      lvs.entries[newId] = { weight: 0, reps: new Array(3).fill(""), hitCeiling: false };
+      lvs.expanded = newId;
+      render();
+    });
+    container.appendChild(addExtraBtn);
+
+    var canSave = lvs.sessionExercises.every(function (ex) { return ex.name.trim().length > 0; });
+    var bottomBar = el("div", { class: "bottom-bar" });
+    var saveBtn = el("button", { class: "save-btn", text: "حفظ جلسة اليوم" });
+    saveBtn.disabled = !canSave;
+    saveBtn.addEventListener("click", function () {
+      var newEntries = lvs.sessionExercises.map(function (ex) {
+        var wasRenamedNow = !ex.isExtra && ex.name !== ex.originalName;
+        var entry = lvs.entries[ex.id];
+        return {
+          exerciseId: (ex.isExtra || wasRenamedNow) ? ("custom_" + ex.name.trim().toLowerCase().replace(/\s+/g, "_")) : ex.id,
+          exerciseName: ex.name.trim(),
+          day: lvs.day,
+          week: state.weekNum,
+          weight: Number(entry.weight) || 0,
+          actualReps: entry.reps.map(function (r) { return Number(r) || 0; }),
+          hitCeiling: entry.hitCeiling,
+          isCustom: ex.isExtra || wasRenamedNow,
+          timestamp: new Date().toISOString()
+        };
+      });
+      persist(newEntries);
+    });
+    bottomBar.appendChild(saveBtn);
+    container.appendChild(bottomBar);
+
+    return container;
+  }
+
+  // ---------- FREE DAY VIEW ----------
+  function renderFreeDay() {
+    if (!freeDayViewState) {
+      freeDayViewState = { dayLabel: "", exercises: [] };
+    }
+    var fvs = freeDayViewState;
+    var container = el("div", { class: "container" });
+
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    backBtn.addEventListener("click", function () { setView("home"); });
+    container.appendChild(backBtn);
+
+    container.appendChild(el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
+      Icons.plane({ size: 20, className: "accent" }),
+      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: "يوم حر" })
+    ]));
+    container.appendChild(el("p", { class: "mono muted", style: { fontSize: "0.875rem", marginBottom: "1.25rem" }, text: "Week " + state.weekNum + " · جلسة مخصصة" }));
+
+    container.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "اسم اليوم" }));
+    var dayLabelInput = el("input", { type: "text", value: fvs.dayLabel, placeholder: "مثال: Travel Full Body", class: "input", style: { borderRadius: "1rem", padding: "0.75rem 1rem", marginBottom: "1.25rem" } });
+    dayLabelInput.addEventListener("input", function (e) { fvs.dayLabel = e.target.value; });
+    container.appendChild(dayLabelInput);
+
+    var list = el("div", { style: { display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1rem" } });
+    fvs.exercises.forEach(function (ex) {
+      var last = ex.name.trim() ? lastEntryForName(ex.name) : null;
+      var card = el("div", { class: "card" });
+
+      var topRow = el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" } });
+      var nameInput = el("input", { type: "text", value: ex.name, placeholder: "اسم التمرين", class: "input", style: { flex: "1" } });
+      nameInput.addEventListener("input", function (e) { ex.name = e.target.value; });
+      topRow.appendChild(nameInput);
+      var removeBtn = el("button", { class: "icon-btn-sm", style: { width: "2.25rem", height: "2.25rem", borderRadius: "0.75rem" } }, [Icons.trash({ size: 15 })]);
+      removeBtn.addEventListener("click", function () {
+        fvs.exercises = fvs.exercises.filter(function (e2) { return e2.localId !== ex.localId; });
+        render();
+      });
+      topRow.appendChild(removeBtn);
+      card.appendChild(topRow);
+
+      if (last) {
+        card.appendChild(el("div", {
+          class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.75rem" },
+          text: "آخر مرة (أسبوع " + last.week + "): " + last.weight + "kg × [" + last.actualReps.join("-") + "]"
+        }));
+      }
+
+      var midRow = el("div", { style: { display: "flex", gap: "0.75rem", marginBottom: "0.75rem" } });
+      var weightCol = el("div", { style: { flex: "1" } }, [
+        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "الوزن (كيلو)" })
+      ]);
+      var weightInput = el("input", { type: "number", step: "0.5", value: ex.weight, class: "input mono" });
+      weightInput.addEventListener("input", function (e) { ex.weight = e.target.value; });
+      weightCol.appendChild(weightInput);
+      midRow.appendChild(weightCol);
+
+      var setsCol = el("div", { style: { width: "6rem" } }, [
+        el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "عدد Sets" })
+      ]);
+      var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
+      setsInput.addEventListener("input", function (e) {
+        var n = Math.max(1, Math.min(8, Number(e.target.value) || 1));
+        ex.sets = n;
+        var newReps = [];
+        for (var i = 0; i < n; i++) newReps.push(ex.reps[i] !== undefined ? ex.reps[i] : "");
+        ex.reps = newReps;
+        render();
+      });
+      setsCol.appendChild(setsInput);
+      midRow.appendChild(setsCol);
+      card.appendChild(midRow);
+
+      card.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: "التكرارات لكل Set" }));
+      var repsGrid = el("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.5rem" } });
+      ex.reps.forEach(function (r, i) {
+        var repInput = el("input", { type: "number", value: r, placeholder: "S" + (i + 1), class: "input mono input-center", style: { padding: "0.625rem 0.5rem" } });
+        repInput.addEventListener("input", function (e) { ex.reps[i] = e.target.value; });
+        repsGrid.appendChild(repInput);
+      });
+      card.appendChild(repsGrid);
+
+      list.appendChild(card);
+    });
+    container.appendChild(list);
+
+    var addBtn = el("button", { class: "dashed-btn" }, [Icons.plus({ size: 16, strokeWidth: 2.5 }), document.createTextNode("إضافة تمرين")]);
+    addBtn.addEventListener("click", function () {
+      fvs.exercises.push({ localId: "custom_" + Date.now() + "_" + fvs.exercises.length, name: "", weight: "", sets: 3, reps: new Array(3).fill("") });
+      render();
+    });
+    container.appendChild(addBtn);
+
+    var canSave = fvs.dayLabel.trim().length > 0 && fvs.exercises.length > 0 && fvs.exercises.every(function (e) { return e.name.trim().length > 0; });
+    var bottomBar = el("div", { class: "bottom-bar" });
+    var saveBtn = el("button", { class: "save-btn", text: "حفظ اليوم الحر" });
+    saveBtn.disabled = !canSave;
+    saveBtn.addEventListener("click", function () {
+      var newEntries = fvs.exercises.map(function (e) {
+        return {
+          exerciseId: "custom_" + e.name.trim().toLowerCase().replace(/\s+/g, "_"),
+          exerciseName: e.name.trim(),
+          day: fvs.dayLabel.trim(),
+          week: state.weekNum,
+          weight: Number(e.weight) || 0,
+          actualReps: e.reps.map(function (r) { return Number(r) || 0; }),
+          hitCeiling: false,
+          isCustom: true,
+          timestamp: new Date().toISOString()
+        };
+      });
+      persist(newEntries);
+    });
+    bottomBar.appendChild(saveBtn);
+    container.appendChild(bottomBar);
+
+    return container;
+  }
+
+  // ---------- OVERLOAD VIEW ----------
+  function renderOverload() {
+    var container = el("div", { class: "container" });
+
+    var backBtn = el("button", { class: "back-btn" }, [Icons.chevronRight({ size: 16 }), document.createTextNode("رجوع")]);
+    backBtn.addEventListener("click", function () { setView("home"); });
+    container.appendChild(backBtn);
+
+    container.appendChild(el("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" } }, [
+      Icons.trendingUp({ size: 20, className: "accent" }),
+      el("h2", { style: { fontSize: "1.25rem", fontWeight: "800" }, text: "أرقام الأسبوع الجاي" })
+    ]));
+    container.appendChild(el("p", { class: "muted", style: { fontSize: "0.875rem", marginBottom: "1.5rem" }, text: "مبني على آخر جلسة مسجلة لكل تمرين" }));
+
+    var statusColors = {
+      "increase-weight": { bg: "rgba(255,107,53,0.15)", text: "#ff6b35", label: "زد الوزن" },
+      "increase-reps": { bg: "rgba(74,222,128,0.15)", text: "#4ade80", label: "زد تكرار" },
+      "repeat": { bg: "rgba(154,159,172,0.15)", text: "#9a9fac", label: "كرر نفس الأرقام" },
+      "no-data": { bg: "rgba(99,104,122,0.15)", text: "#63687a", label: "لا يوجد سجل" }
+    };
+
+    var groupsWrap = el("div", { style: { display: "flex", flexDirection: "column", gap: "1.5rem" } });
+
+    DAY_ORDER.forEach(function (d) {
+      var dayGroup = el("div");
+      dayGroup.appendChild(el("div", { class: "mono muted", style: { fontSize: "0.75rem", marginBottom: "0.5rem", letterSpacing: "0.05em" }, text: "DAY " + d + " · " + PROGRAM[d].name.toUpperCase() }));
+
+      var rowsWrap = el("div", { style: { display: "flex", flexDirection: "column", gap: "0.5rem" } });
+      PROGRAM[d].exercises.forEach(function (ex) {
+        var entries = state.logs.filter(function (l) { return l.exerciseId === ex.id; }).sort(function (a, b) { return b.week - a.week; });
+        var last = entries[0] || null;
+        var suggestion = computeSuggestion(ex, last);
+        var s = statusColors[suggestion.status];
+
+        var card = el("div", { class: "card" });
+        var topRow = el("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.5rem" } }, [
+          el("span", { style: { fontWeight: "600", fontSize: "0.875rem" }, text: ex.name }),
+          el("span", { class: "status-pill mono", style: { backgroundColor: s.bg, color: s.text }, text: s.label })
+        ]);
+        card.appendChild(topRow);
+
+        if (last) {
+          card.appendChild(el("div", {
+            class: "mono faint", style: { fontSize: "0.75rem", marginBottom: "0.25rem" },
+            text: "آخر مرة: " + last.weight + "kg × [" + last.actualReps.join("-") + "]"
+          }));
+        }
+
+        var unitSuffix = ex.unit === "BW" ? "" : "kg";
+        card.appendChild(el("div", { class: "mono", style: { fontSize: "0.875rem", fontWeight: "700", color: "#f5f4f0" }, text: "→ " + suggestion.weight + unitSuffix + " × " + suggestion.reps + " reps" }));
+        card.appendChild(el("div", { class: "muted", style: { fontSize: "0.75rem", marginTop: "0.25rem" }, text: suggestion.note }));
+
+        rowsWrap.appendChild(card);
+      });
+
+      dayGroup.appendChild(rowsWrap);
+      groupsWrap.appendChild(dayGroup);
+    });
+
+    container.appendChild(groupsWrap);
+    return container;
+  }
+
+  // ---------- INIT ----------
+  render();
+})();
+</script>
+</body>
+</html>
