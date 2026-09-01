@@ -850,22 +850,20 @@
         weightCol.appendChild(weightInput);
         weightRow.appendChild(weightCol);
 
-        if (ex.isExtra) {
-          var setsCol = el("div", { style: { width: "6rem" } }, [
-            el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("setsCountLabel") })
-          ]);
-          var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
-          setsInput.addEventListener("input", function (e) {
-            var n = Math.max(1, Math.min(8, Number(e.target.value) || 1));
-            ex.sets = n;
-            var newReps = [];
-            for (var i = 0; i < n; i++) newReps.push(entry.reps[i] !== undefined ? entry.reps[i] : "");
-            entry.reps = newReps;
-            render();
-          });
-          setsCol.appendChild(setsInput);
-          weightRow.appendChild(setsCol);
-        }
+        var setsCol = el("div", { style: { width: "6rem" } }, [
+          el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("setsCountLabel") })
+        ]);
+        var setsInput = el("input", { type: "number", min: "1", max: "8", value: ex.sets, class: "input mono input-center" });
+        setsInput.addEventListener("input", function (e) {
+          var n = Math.max(1, Math.min(8, Number(e.target.value) || 1));
+          ex.sets = n;
+          var newReps = [];
+          for (var i = 0; i < n; i++) newReps.push(entry.reps[i] !== undefined ? entry.reps[i] : "");
+          entry.reps = newReps;
+          render();
+        });
+        setsCol.appendChild(setsInput);
+        weightRow.appendChild(setsCol);
         body.appendChild(weightRow);
 
         body.appendChild(el("label", { class: "muted", style: { fontSize: "0.75rem", display: "block", marginBottom: "0.375rem" }, text: t("repsPerSetLabel") }));
